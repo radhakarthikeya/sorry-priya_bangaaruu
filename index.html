@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For you ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#3b2430;--rose:#a8485f;--soft:#8a6b76;--card:rgba(255,255,255,.75)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:linear-gradient(160deg,#f6e3ea,#fbeedd 50%,#e8dff3);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom)}
+#top{display:flex;align-items:center;gap:10px;padding:14px 0;min-height:56px}
+#back{background:none;border:0;font-size:22px;color:var(--soft);cursor:pointer;visibility:hidden}
+#count{margin:0 auto;font-size:12px;letter-spacing:.1em;color:var(--soft);background:var(--card);padding:6px 14px;border-radius:99px}
+#stage{flex:1;overflow-y:auto;display:flex;flex-direction:column;justify-content:center;text-align:center;animation:in .6s ease;padding-bottom:20px}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h1,h2{font-family:'Playfair Display',serif;font-weight:500}
+h1{font-size:34px;line-height:1.2}
+.big{font-size:44px;color:var(--rose);font-weight:700}
+.it{font-style:italic;font-family:'Playfair Display',serif;color:var(--rose)}
+.sub{color:var(--soft);margin-top:10px;font-size:15px}
+.btn{margin:26px auto 0;border:0;background:var(--rose);color:#fff;font:500 16px 'DM Sans',sans-serif;padding:15px 34px;border-radius:99px;box-shadow:0 8px 22px rgba(168,72,95,.35);cursor:pointer;position:relative}
+.btn:active{transform:scale(.97)}
+.card{background:var(--card);backdrop-filter:blur(8px);border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(120,60,80,.12);text-align:left;line-height:1.7}
+.line{opacity:0;transform:translateY(8px);transition:.7s}
+.line.show{opacity:1;transform:none}
+.env{width:210px;height:140px;margin:0 auto 34px;background:#f1d9d3;border-radius:8px;position:relative;box-shadow:0 14px 30px rgba(120,60,80,.2);animation:float 3s ease-in-out infinite}
+.env:before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 49%,#e7c7c0 50%) 0 0/50% 100% no-repeat,linear-gradient(to bottom left,transparent 49%,#e7c7c0 50%) 100% 0/50% 100% no-repeat;border-radius:8px}
+.env i{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:var(--rose);color:#fff;font-style:normal;line-height:34px}
+@keyframes float{50%{transform:translateY(-8px)}}
+svg.bear{width:150px;margin:20px auto 0;display:block}
+.polas{display:flex;flex-direction:column;gap:18px;margin-top:18px}
+.pola{background:#fff;padding:10px 10px 14px;border-radius:6px;box-shadow:0 10px 24px rgba(0,0,0,.14);text-align:left}
+.pola:nth-child(odd){transform:rotate(-2deg)}.pola:nth-child(even){transform:rotate(2deg)}
+.pola .ph{height:200px;border-radius:3px;background:linear-gradient(135deg,#f3c9d5,#f7e1c8);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:40px}
+.pola img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.pola h3{font-family:'Playfair Display',serif;margin:10px 0 2px;font-size:19px}
+.pola p{font-size:13px;color:var(--soft)}
+.go{text-align:left;margin-top:18px}
+.go .line{padding:8px 0 8px 18px;border-left:2px solid #d9a9bb;font-size:17px;font-family:'Playfair Display',serif}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:flex-start}
+.chip{background:var(--card);padding:8px 14px;border-radius:99px;font-size:14px}
+.tag{font-size:11px;letter-spacing:.15em;color:var(--soft);margin-top:22px;text-align:left}
+#hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.h{position:absolute;bottom:-30px;animation:up 3.5s linear forwards}
+@keyframes up{to{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top"><button id="back" aria-label="Back">‹</button><div id="count"></div><span style="width:22px"></span></div>
+  <div id="stage"></div>
+</div>
+<div id="hearts"></div>
+
+<script>
+const HER_NAME = "Priya Bangaaram";
+const MY_NAME  = "Karthik";
+const PHOTOS = ["1.jpg", "2.jpg", "3.jpg"];
+
+const stage = document.getElementById('stage'), back = document.getElementById('back'), count = document.getElementById('count');
+let step = 0;
+const TOTAL = 6;
+const bear = `<svg class="bear" viewBox="0 0 160 170"><circle cx="38" cy="38" r="20" fill="#e9b9a4"/><circle cx="122" cy="38" r="20" fill="#e9b9a4"/><circle cx="80" cy="70" r="46" fill="#f0c7b4"/><ellipse cx="80" cy="128" rx="38" ry="36" fill="#f0c7b4"/><circle cx="64" cy="64" r="5" fill="#3b2430"/><circle cx="96" cy="64" r="5" fill="#3b2430"/><path d="M70 90q10-8 20 0" stroke="#3b2430" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="52" cy="78" r="7" fill="#f2a3b0" opacity=".6"/><circle cx="108" cy="78" r="7" fill="#f2a3b0" opacity=".6"/><path d="M80 148l-20-18a12 12 0 0 1 20-8 12 12 0 0 1 20 8z" fill="#c9566f"/></svg>`;
+
+function reveal(sel, gap=900, start=300){
+  stage.querySelectorAll(sel).forEach((el,i)=>setTimeout(()=>el.classList.add('show'), start+i*gap));
+}
+function hearts(n=24){
+  const box=document.getElementById('hearts');
+  for(let i=0;i<n;i++){
+    const s=document.createElement('span');s.className='h';s.textContent=['♥','💗','💕','🤍'][i%4];
+    s.style.left=Math.random()*100+'%';s.style.fontSize=14+Math.random()*22+'px';s.style.animationDelay=Math.random()*1.5+'s';
+    box.appendChild(s);setTimeout(()=>s.remove(),5500);
+  }
+}
+
+const steps = [
+ () => `<div class="env"><i>♥</i></div>
+   <h1><span class="it">Hey...</span><br>Can we talk for a minute?</h1>
+   <p class="sub">I made something for you.</p>
+   <button class="btn" onclick="next()">Open ♥</button>`,
+
+ () => `<h2 style="font-size:26px;margin-bottom:16px">I don't know how to fix everything...</h2>
+   <div class="card">
+     <div class="line">I'm sorry for the things I said.</div>
+     <div class="line">I'm sorry if I hurt you.</div>
+     <div class="line">I'm sorry if I made you feel unimportant.</div>
+     <div class="line it">That was never what I wanted.</div>
+   </div>${bear}
+   <button class="btn" onclick="next()">Continue →</button>`,
+
+ () => {
+   const items=[["Your smile","Somehow, you always make everything feel better.","😊"],["Our random conversations","Even the most random talks became my favourite ones.","☕"],["Still the same sweet face","Even as a little girl, you had a heart that melts mine.","💞"]];
+   return `<h2 style="font-size:26px">Things I never want to <span class="it">stop</span> appreciating</h2>
+   <div class="polas">${items.map((x,i)=>`<div class="pola"><div class="ph">${PHOTOS[i]?`<img src="${PHOTOS[i]}" alt="">`:x[2]}</div><h3>${x[0]}</h3><p>${x[1]}</p></div>`).join('')}</div>
+   <button class="btn" onclick="next()">Continue →</button>`;
+ },
+
+ () => `<h1 style="text-align:left">If I could go back...</h1>
+   <div class="go">
+     <div class="line">I'd choose my words more carefully.</div>
+     <div class="line">I'd listen a little more.</div>
+     <div class="line">I'd put my ego aside.</div>
+     <div class="line">And I would never want you to feel hurt because of me.</div>
+   </div>
+   <p class="line it" style="text-align:left;margin-top:18px">I can't change what happened...</p>
+   <p class="line" style="text-align:left;font:500 22px 'Playfair Display',serif">But I can change what I do next.</p>
+   <div class="tag line">SO HERE'S MY PROMISE</div>
+   <div class="chips line"><span class="chip">♥ Listen better.</span><span class="chip">♥ Communicate better.</span><span class="chip">♥ Never take you for granted.</span></div>
+   <button class="btn line" style="align-self:flex-start;margin-left:0" onclick="next()">Ask me something →</button>`,
+
+ () => `<p class="it" style="margin-bottom:14px">Okay... one last question.</p>
+   <div class="card" style="text-align:center" id="q">
+     <h2 style="font-size:28px">Will you give me another chance?</h2>
+     <div style="display:flex;gap:12px;justify-content:center;margin-top:22px;min-height:56px;position:relative">
+       <button class="btn" style="margin:0" onclick="yes()">Yes 🥹</button>
+       <button class="btn" id="no" style="margin:0;background:#c9b6bd;box-shadow:none" onmouseover="dodge()" ontouchstart="dodge(event)" onclick="dodge()">No</button>
+     </div></div>`,
+
+ () => `<p class="it">One last thing...</p>
+   <h1 class="big" style="margin:4px 0 18px">I'm sorry.</h1>
+   <div class="card">
+     <p class="it" style="margin-bottom:8px">To ${HER_NAME},</p>
+     <p>Thank you for being in my life.</p>
+     <p style="margin-top:10px">I know I can't undo what happened, but I hope you know how much you mean to me.</p>
+     <p style="font:500 22px 'Playfair Display',serif;margin-top:14px">Can we start again?</p>
+     <p class="it" style="text-align:right;margin-top:6px">— ${MY_NAME} ♥</p>
+   </div>
+   <button class="btn" onclick="hug(this)">Give Me A Hug 🫂</button>`
+];
+
+function yes(){
+  hearts(40);
+  document.getElementById('q').innerHTML=`<div style="font:700 40px 'Playfair Display',serif;color:var(--rose)">YAY 🥹🤎</div><p style="margin-top:6px">I promise I'll try to do better.</p><button class="btn" onclick="next()">Continue →</button>`;
+}
+function dodge(e){
+  if(e) e.preventDefault();
+  const b=document.getElementById('no');
+  b.style.position='relative';
+  b.style.transform=`translate(${(Math.random()-.5)*160}px,${(Math.random()-.5)*90}px)`;
+}
+function hug(b){hearts(50);b.textContent='💗 Hugging you tight 💗'}
+function render(){
+  stage.style.animation='none';stage.offsetHeight;stage.style.animation='';
+  stage.innerHTML=steps[step]();stage.scrollTop=0;
+  count.textContent=String(step+1).padStart(2,'0')+' / 0'+TOTAL;
+  back.style.visibility=step?'visible':'hidden';
+  if(step===1) reveal('.line',900);
+  if(step===3) reveal('.line',800,200);
+}
+function next(){if(step<TOTAL-1){step++;render()}}
+back.onclick=()=>{if(step){step--;render()}};
+render();
+</script>
+</body>
+</html>
